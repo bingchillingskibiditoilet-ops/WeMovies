@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="WeMovies.to - a simple movie discovery website.">
+<title>WeMovies.to — Movie Hub</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#090a0f;color:#f5f5f5;min-height:100vh}
+header{position:sticky;top:0;z-index:10;background:rgba(9,10,15,.94);backdrop-filter:blur(12px);border-bottom:1px solid #20232d}
+.nav{max-width:1200px;margin:auto;padding:18px 22px;display:flex;align-items:center;gap:22px}
+.logo{font-size:25px;font-weight:800;letter-spacing:.5px}.logo span{color:#e50914}
+.search{flex:1;max-width:520px;margin-left:auto}
+.search input{width:100%;padding:12px 16px;border-radius:999px;border:1px solid #30333d;background:#15171e;color:white;outline:none;font-size:15px}
+.search input:focus{border-color:#e50914}
+main{max-width:1200px;margin:auto;padding:28px 22px 60px}
+.hero{min-height:310px;border-radius:20px;padding:42px;display:flex;align-items:end;background:linear-gradient(90deg,#101219 15%,rgba(16,18,25,.72) 55%,rgba(16,18,25,.12)),linear-gradient(135deg,#35141a,#141722 55%,#0d0e14);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.hero h1{font-size:44px;margin-bottom:10px}.hero p{color:#c9cad0;max-width:600px;line-height:1.6}
+.btn{display:inline-block;margin-top:18px;padding:11px 18px;border-radius:9px;background:#e50914;color:white;text-decoration:none;font-weight:700;border:0;cursor:pointer}
+h2{margin:35px 0 18px;font-size:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:18px}
+.card{background:#12141b;border:1px solid #20232d;border-radius:13px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-4px);border-color:#444855}
+.poster{height:235px;display:flex;align-items:end;padding:12px;background:linear-gradient(145deg,#242733,#11131a);font-size:19px;font-weight:800}
+.card:nth-child(2) .poster{background:linear-gradient(145deg,#202c44,#11151f)}
+.card:nth-child(3) .poster{background:linear-gradient(145deg,#49301c,#17120f)}
+.card:nth-child(4) .poster{background:linear-gradient(145deg,#263b2d,#101712)}
+.card:nth-child(5) .poster{background:linear-gradient(145deg,#3a2541,#151019)}
+.card:nth-child(6) .poster{background:linear-gradient(145deg,#423b20,#15130d)}
+.info{padding:12px}.title{font-weight:700}.meta{font-size:13px;color:#999da8;margin-top:6px}
+.empty{display:none;text-align:center;color:#aeb1ba;padding:40px}
+footer{border-top:1px solid #20232d;color:#888;padding:25px 22px;text-align:center;font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:20;padding:20px;align-items:center;justify-content:center}
+.modal.show{display:flex}.modalbox{width:min(650px,100%);background:#14161e;border:1px solid #2a2d37;border-radius:18px;padding:25px}
+.close{float:right;background:none;color:#aaa;border:0;font-size:25px;cursor:pointer}.modalbox h2{margin:5px 0 10px}.modalbox p{color:#b8bbc4;line-height:1.6}
+@media(max-width:600px){.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%;max-width:none}.hero{padding:28px;min-height:280px}.hero h1{font-size:32px}.grid{grid-template-columns:repeat(2,1fr)}.poster{height:205px}}
+
+.badge{position:absolute;top:10px;right:10px;background:#e50914;color:#fff;padding:5px 7px;border-radius:5px;font-size:11px;font-weight:800}
+.poster{position:relative}
+.ad-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
+.ad-overlay.show{display:flex}
+.ad-box{width:min(420px,100%);background:#171922;border:1px solid #30333d;border-radius:16px;padding:30px;text-align:center}
+.ad-label{font-size:11px;color:#777;margin-bottom:16px;letter-spacing:1px}
+.ad-count{font-size:42px;font-weight:800;margin:15px 0}
+.ad-progress{height:5px;background:#2a2d36;border-radius:99px;overflow:hidden}
+.ad-progress span{display:block;height:100%;width:0;background:#e50914;animation:adprogress 2s linear forwards}
+@keyframes adprogress{to{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <div class="logo">We<span>Movies.to</span></div>
+    <div class="search"><input id="search" type="search" placeholder="Search movies..." autocomplete="off"></div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Movie Night Starts Here.</h1>
+      <p>Discover movies, browse genres, and explore your collection in this simple movie-site starter.</p>
+      <button class="btn" onclick="document.getElementById('movies').scrollIntoView({behavior:'smooth'})">Browse Movies</button>
+    </div>
+  </section>
+
+  <h2 id="heading">Trending Now</h2>
+  <section class="grid" id="movies"></section>
+  <div class="empty" id="empty">No movies found. Try another search.</div>
+</main>
+
+<footer>WeMovies.to © 2026 · Demo movie discovery site. Add only videos you own or are licensed to distribute.</footer>
+
+
+<div class="ad-overlay" id="adOverlay">
+  <div class="ad-box">
+    <div class="ad-label">ADVERTISEMENT</div>
+    <div>Sponsored content</div>
+    <div class="ad-count" id="adCount">2</div>
+    <div class="ad-progress"><span></span></div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modalbox">
+    <button class="close" onclick="closeModal()">×</button>
+    <h2 id="modalTitle"></h2>
+    <p id="modalMeta"></p>
+    <p id="modalDesc" style="margin-top:15px"></p>
+    <button class="btn" onclick="alert('Add your legal video/player URL here.')">▶ Watch</button>
+  </div>
+</div>
+
+<script>
+const movies = [
+ {title:"Obsession",year:2026,genre:"Thriller",tag:"HD",desc:"A current 2026 thriller appearing near the top of recent Philippines streaming charts."},
+ {title:"Evil Dead Burn",year:2026,genre:"Horror",tag:"HD",desc:"A recent horror title appearing in current Philippines streaming charts."},
+ {title:"Minions & Monsters",year:2026,genre:"Animation",tag:"HD",desc:"An animated feature among recent 2026 streaming and box-office titles."},
+ {title:"Disclosure Day",year:2026,genre:"Sci-Fi",tag:"HD",desc:"A 2026 science-fiction feature listed among current popular streaming titles."},
+ {title:"The Furious",year:2026,genre:"Action",tag:"HD",desc:"A recent action title appearing in current Philippines streaming charts."},
+ {title:"Michael",year:2026,genre:"Biography",tag:"HD",desc:"A 2026 music biographical film and one of the year's major box-office titles."},
+ {title:"Project Hail Mary",year:2026,genre:"Sci-Fi",tag:"HD",desc:"A 2026 science-fiction film based on Andy Weir's novel."},
+ {title:"The Super Mario Galaxy Movie",year:2026,genre:"Animation",tag:"HD",desc:"A 2026 animated adventure featuring the Mario universe."},
+ {title:"Spider-Man: Brand New Day",year:2026,genre:"Action",tag:"HD",desc:"A 2026 Spider-Man feature and one of the year's major theatrical releases."},
+ {title:"The Odyssey",year:2026,genre:"Adventure",tag:"HD",desc:"Christopher Nolan's 2026 epic adaptation of the ancient Greek story."},
+ {title:"Toy Story 5",year:2026,genre:"Animation",tag:"HD",desc:"A 2026 animated sequel in the Toy Story series."},
+ {title:"The Devil Wears Prada 2",year:2026,genre:"Comedy",tag:"HD",desc:"A 2026 comedy-drama sequel."},
+ {title:"Backrooms",year:2026,genre:"Horror",tag:"HD",desc:"A 2026 horror title that has attracted significant box-office attention."},
+ {title:"Hoppers",year:2026,genre:"Animation",tag:"HD",desc:"A 2026 animated feature."},
+ {title:"Obsession",year:2026,genre:"Thriller",tag:"HD",desc:"A thriller currently appearing in Philippines streaming charts."},
+ {title:"Mortal Kombat II",year:2026,genre:"Action",tag:"HD",desc:"A 2026 action-fantasy sequel."},
+ {title:"The Conjuring",year:2013,genre:"Horror",tag:"HD",desc:"A supernatural horror classic."},
+ {title:"Spider-Man: No Way Home",year:2021,genre:"Action",tag:"HD",desc:"A superhero adventure featuring Spider-Man."},
+ {title:"Interstellar",year:2014,genre:"Sci-Fi",tag:"HD",desc:"A science-fiction adventure about humanity's search for a new home."},
+ {title:"Dune: Part Two",year:2024,genre:"Sci-Fi",tag:"HD",desc:"An epic science-fiction continuation set on Arrakis."}
+];
+
+const container=document.getElementById("movies");
+const search=document.getElementById("search");
+const empty=document.getElementById("empty");
+const heading=document.getElementById("heading");
+
+function render(list){
+  container.innerHTML="";
+  empty.style.display=list.length?"none":"block";
+  list.forEach((m,i)=>{
+    const card=document.createElement("article");
+    card.className="card";
+    card.innerHTML=`<div class="poster"><span class="badge">${m.tag || "HD"}</span>${m.title}</div><div class="info"><div class="title">${m.title}</div><div class="meta">${m.year} · ${m.genre}</div></div>`;
+    card.onclick=()=>showAdThenOpen(m);
+    container.appendChild(card);
+  });
+}
+
+function showAdThenOpen(m){
+  const ad=document.getElementById("adOverlay");
+  const count=document.getElementById("adCount");
+  ad.classList.add("show");
+  let left=2;
+  count.textContent=left;
+  const timer=setInterval(()=>{
+    left--;
+    count.textContent=left;
+    if(left<=0){
+      clearInterval(timer);
+      ad.classList.remove("show");
+      openModal(m);
+    }
+  },1000);
+}
+
+function openModal(m){
+  document.getElementById("modalTitle").textContent=m.title;
+  document.getElementById("modalMeta").textContent=`${m.year} · ${m.genre}`;
+  document.getElementById("modalDesc").textContent=m.desc;
+  document.getElementById("modal").classList.add("show");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+search.addEventListener("input",()=>{
+  const q=search.value.toLowerCase().trim();
+  heading.textContent=q?`Search results for "${search.value}"`:"Trending Now";
+  render(movies.filter(m=>(m.title+" "+m.genre).toLowerCase().includes(q)));
+});
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+render(movies);
+</script>
+</body>
+</html>
